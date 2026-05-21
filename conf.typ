@@ -16,7 +16,7 @@
   index-terms: (),
 
   // The article's paper size. Also affects the margins.
-  paper-size: "us-letter",
+  paper-size: "a4",
 
   // The result of a call to the `bibliography` function or `none`.
   bibliography: none,
@@ -34,8 +34,7 @@
   // Set the body font.
   // As of 2024-08, the IEEE LaTeX template uses wider interword spacing
   // - See e.g. the definition \def\@IEEEinterspaceratioM{0.35} in IEEEtran.cls
-  //set text(font: "TeX Gyre Termes", size: 10pt, spacing: .35em)
-  set text(font: "New Computer Modern Sans", size: 10pt, spacing: .35em)
+  set text(font: "TeX Gyre Termes", size: 10pt, spacing: .35em)
 
   // Enums numbering
   set enum(numbering: "1)a)i)")

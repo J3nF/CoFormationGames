@@ -8,23 +8,30 @@
   abstract: [
     #todo
   ],
-  authors: ( // todo
+  authors: (
     (
-      name: "Martin Haug",
-      department: [Co-Founder],
-      organization: [Typst GmbH],
-      location: [Berlin, Germany],
-      email: "haug@typst.app"
+      name: "Jens Friedel",
+      department: [School of Engineering Mathematics and Technology],
+      organization: [University of Bristol],
+      location: [Bristol, United Kingdom],
+      email: "jens.friedel@bristol.ac.uk"
     ),
     (
-      name: "Laurenz Mädje",
-      department: [Co-Founder],
-      organization: [Typst GmbH],
-      location: [Berlin, Germany],
-      email: "maedje@typst.app"
+      name: "Richard Pettigrew",
+      department: [Department of Philosophy],
+      organization: [University of Bristol],
+      location: [Bristol, United Kingdom],
+      email: "richard.pettigrew@bristol.ac.uk"
+    ),
+    (
+      name: "Martin Bullinger",
+      department: [School of Engineering Mathematics and Technology],
+      organization: [University of Bristol],
+      location: [Bristol, United Kingdom],
+      email: "martin.bullinger@bristol.ac.uk"
     ),
   ),
-  index-terms: ("Scientific writing", "Typesetting", "Document creation", "Syntax"),
+  index-terms: ("Collective dynamics", "Game theory", "Network formation games", "Network theory (graphs)"),
   paper-size: "a4",
   bibliography: bibliography("refs.bib"),
   figure-supplement: [Fig.],
