@@ -1,0 +1,10 @@
+name = "CoFormationGames"
+uuid = "fb7d733c-1f05-4713-8d88-4c77b5d6a626"
+version = "0.1.0"
+authors = ["J3nF <jensfriedel+git@protonmail.com>"]
+
+[deps]
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+
+[compat]
+Graphs = "1.14.0"
