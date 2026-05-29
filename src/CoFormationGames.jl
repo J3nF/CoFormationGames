@@ -6,7 +6,7 @@ import Random
 """
     run_iteration!(G, x, r_c, r_g, t_max, ε)
 
-Run update iteration for co-formation games.
+Run update loop for co-formation games and costs over time.
 
 Every r_c steps, a random node updates its opinion via get_opinion_update.
 Every r_g steps, a random node updates its connections via get_action_update.
@@ -19,11 +19,10 @@ t_max: Maximum runtime in steps
 ε: Threshold to define convergence
 
 """
-function run_iteration!(G, x, r_c, r_g, t_max, ε)
-    t = 0
+function run_game!(G, x, r_c, r_g, t_max, ε)
+    t = 1
     c = zeros(t_max)
     c[t] = get_costs(G, x)
-
     while t < t_max || ε < Δc
         if floor(t / r_c) > floor((t - 1) / r_c)
             node = rand(1:n)
@@ -31,10 +30,8 @@ function run_iteration!(G, x, r_c, r_g, t_max, ε)
         end
         x[node] = x_new
         if floor(t / r_g) > floor((t - 1) / r_g)
-            node = rand(1:n)
-            get_action_update!(G, x)
+            G = get_action_update(G, x)
         end
-        c[t] = get_cost_change()
         t += 1
     end
     return c
@@ -56,18 +53,19 @@ end
 
 Check whether a new action (establishing or cancelling the sponsorship of an
 edge) could improve the node's costs.
+
+Subscripts '_a' signify variables assuming an action to take place.
 """
 function get_action_update(G, x)
     nodes = 1:length(x)
     for _ in nodes
         i = randn!(nodes)
-        act = check_actions(i, G, x)
+        G_a = check_actions(i, G, x)
         if act != 0
-            update_action!(i, G, act)
-            return 1
+            return G_a
         end
     end
-    return 0
+    return G
 end
 
 """
@@ -75,12 +73,23 @@ end
 
 Iterate through node's sponsorship actions until finding a positive one.
 If no helpful action is possible, return zero.
+
+Subscripts '_a' signify variables assuming an action to take place.
 """
 function check_actions(node, G, x)
-    nodes = 1:nodes
+    # Define an iterator over all but the current node
+    nodes_without_i = cat(1:node-1, node+1:length(x), dims=1)
+
+    for _ in nodes_without_i
+        j = randn!(nodes)
+        G_a = get_changed_edge(G, i, j)
+        c_0 = get_costs(i, j, G, x)
+        c_a = get_costs(i, j, G_tmp, x)
+        if c_a < c_0
+            return G_a
+        end
+    end
+    return G
 end
-
-
-
 
 end # module CoFormationGames
