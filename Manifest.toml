@@ -2,7 +2,7 @@
 
 julia_version = "1.12.1"
 manifest_format = "2.0"
-project_hash = "d1e365175a7ef588b4443840b54a5c45f9166724"
+project_hash = "5aa701274a08e920167747b76ad675a0260fbf60"
 
 [[deps.ArnoldiMethod]]
 deps = ["LinearAlgebra", "Random", "StaticArrays"]

@@ -92,4 +92,22 @@ function check_actions(node, G, x)
     return G
 end
 
+"""
+    get_costs(i::Int, j::Int, G::Type{Graphs.AbstractGraph}, x::Vector{Number})
+
+TBW
+"""
+function get_costs(i::Int, j::Int, G::Type{Graphs.AbstractGraph}, x::Vector{Number})
+    # Define the cost function here
+end
+
+"""
+    get_changed_edge(G, i, j)
+
+TBW
+"""
+function get_changed_edge(G, i, j)
+    # Define how to change the edge between i and j here
+end
+
 end # module CoFormationGames
