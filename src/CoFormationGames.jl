@@ -92,6 +92,20 @@ function check_actions(node, G, x)
     return G
 end
 
+
+"""
+    get_changed_edge(G, i, j)
+
+TBW
+"""
+function get_changed_edge(G, i, j)
+    if Graphs.has_edge(G, i, j)
+        return Graphs.rem_edge(G, i, j)
+    else
+        return Graphs.add_edge(G, i, j)
+    end
+end
+
 """
     get_costs(i::Int, j::Int, G::Type{Graphs.AbstractGraph}, x::Vector{Number})
 
@@ -102,12 +116,12 @@ function get_costs(i::Int, j::Int, G::Type{Graphs.AbstractGraph}, x::Vector{Numb
 end
 
 """
-    get_changed_edge(G, i, j)
+    get_total_costs(G, x)
 
 TBW
 """
-function get_changed_edge(G, i, j)
-    # Define how to change the edge between i and j here
+function get_total_costs(G, x)
+    # Define the total cost function here
 end
 
 end # module CoFormationGames
