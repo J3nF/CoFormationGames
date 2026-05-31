@@ -4,7 +4,7 @@ import Graphs
 import Random
 
 """
-    run_iteration!(G, x, r_c, r_g, t_max, ε)
+    run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
 
 Run update loop for co-formation games and costs over time.
 
@@ -12,6 +12,7 @@ Every r_c steps, a random node updates its opinion via get_opinion_update.
 Every r_g steps, a random node updates its connections via get_action_update.
 
 G: Graph
+a: Action profile
 x: Vector, storing edge opinions
 r_c: Communication rate
 r_g: Float, Communication rate
@@ -19,18 +20,17 @@ t_max: Maximum runtime in steps
 ε: Threshold to define convergence
 α_c: Costs per edge
 """
-function run_game!(G, x, r_c, r_g, t_max, ε, α_c)
+function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
     t = 1
     c = zeros(t_max)
-    c[t] = get_total_costs(G, x, α_c)
+    c[t] = get_total_costs(G, a, x, α_c)
     while t < t_max || ε < Δc
         if floor(t / r_c) > floor((t - 1) / r_c)
             node = rand(1:n)
-            x_new = get_opinion_update(node, G, x)
+            x[node] = get_opinion_update(node, G, x)
         end
-        x[node] = x_new
         if floor(t / r_g) > floor((t - 1) / r_g)
-            G = get_action_update(G, x)
+            G, a = get_action_update(G, a, x, α_c)
         end
         t += 1
     end
@@ -49,47 +49,49 @@ function get_opinion_update(node, G, x)
 end
 
 """
-    get_action_update(G, x)
+    get_action_update(G, a, x)
 
 Check whether a new action (establishing or cancelling the sponsorship of an
 edge) could improve the node's costs.
 
-Subscripts '_a' signify variables assuming an action to take place.
+Subscripts '_tmp' signify variables assuming an action to take place.
 """
-function get_action_update(G, x,)
-    nodes = 1:length(x)
-    for _ in nodes
-        i = randn!(nodes)
-        G_a = check_actions(i, G, x)
-        if act != 0
-            return G_a
+function get_action_update(G, a, x, α_c)
+    shuffled_nodes = Random.shuffle(1:length(x))
+    for i in shuffled_nodes
+        G_tmp, a_tmp = check_actions(i, G, a, x, α_c)
+        if (G_tmp, a_tmp) != (G, a)
+            break
         end
     end
-    return G
+    return G_tmp, a_tmp
 end
 
 """
-    check_actions(node, G, x)
+    check_actions(node, G, a, x)
 
 Iterate through node's sponsorship actions until finding a positive one.
 If no helpful action is possible, return zero.
 
-Subscripts '_a' signify variables assuming an action to take place.
+Subscripts '_tmp' signify variables assuming an action to take place.
 """
-function check_actions(node, G, x)
+function check_actions(node, G, a, x, α_c)
     # Define an iterator over all but the current node
     nodes_without_i = cat(1:node-1, node+1:length(x), dims=1)
+    Random.shuffle!(nodes_without_i)
+    c_0 = get_costs(node, G, a, x, α_c)
 
-    for _ in nodes_without_i
-        j = randn!(nodes)
-        G_a = get_changed_edge(G, i, j)
-        c_0 = get_costs(i, G, x, α_c)
-        c_a = get_costs(i, G_tmp, x, α_c)
-        if c_a < c_0
-            return G_a
+    for j in nodes_without_i
+        G_tmp = get_changed_edge(G, node, j)
+        c_tmp = get_costs(node, G_tmp, a, x, α_c)
+        if c_tmp < c_0
+            a_tmp = copy(a)
+            a_tmp[node, j] = 1 - a_tmp[node, j]
+        else
+            G_tmp = copy(G)
         end
     end
-    return G
+    return G_tmp, a_tmp
 end
 
 
@@ -99,23 +101,25 @@ end
 TBW
 """
 function get_changed_edge(G, i, j)
-    # I guess there's a way to do this without if-else... TODO
-    if Graphs.has_edge(G, i, j)
-        return Graphs.rem_edge!(G, i, j)
+    G_tmp = copy(G)
+    if Graphs.has_edge(G_tmp, i, j)
+        Graphs.rem_edge!(G_tmp, i, j)
     else
-        return Graphs.add_edge!(G, i, j)
+        Graphs.add_edge!(G_tmp, i, j)
     end
+    return G_tmp
 end
 
 """
-    get_costs(node::Int, G::Type{Graphs.AbstractGraph}, x::Vector{Number}, α_c)
+    get_costs(node, G, a, x, α_c)
 
 TBW
 """
-function get_costs(node::Int, G::Type{Graphs.AbstractGraph}, x::Vector{Number}, α_c)
-    c_distances = sum(Graphs.desopo_pape_shortest_paths(g, node))
-    c_edges = α_c * Graphs.ne(G)
+function get_costs(node, G, a, x, α_c) # I could make this and the total cost function one thing by using a vector for "node"...
+    c_distances = sum(Graphs.desopo_pape_shortest_paths(G, node))
+    c_edges = α_c * sum(a[i, :])
     c_opinion = get_opinion_costs(node, G, x)
+    return -(c_distances + c_edges + c_opinion)
 end
 
 """
@@ -123,9 +127,9 @@ end
 
 TBW
 """
-function get_total_costs(G, x, α_c)
+function get_total_costs(G, a, x, α_c)
     Σ_distances = sum(Graphs.floyd_warshall_shortest_paths(G).dists)
-    Σ_edges = α_c * Graphs.ne(G)
+    Σ_edges = α_c * sum(a)
     Σ_opinion = sum(get_opinion_costs(i, G, x) for i in 1:length(x))
     return -(Σ_distances + Σ_edges + Σ_opinion)
 end
