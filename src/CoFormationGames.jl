@@ -1,6 +1,7 @@
 module CoFormationGames
 
 import Graphs
+import Printf
 import Random
 
 """
@@ -33,9 +34,11 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
             G, a = get_action_update(G, a, x, α_c)
         end
         t += 1
-        c[t+1] = get_total_costs(G, a, x, α_c)
-        Δc = c[t+1] - c[t]
-        println("t/t_max: \t$(t/$t_max), ε/Δc: \t$(ε/Δc)")
+        c[t] = get_total_costs(G, a, x, α_c)
+        Δc = c[t] - c[t-1]
+        if floor(t / 10) > floor((t - 1) / 10)
+            @Printf.printf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t/t_max, c[t]/c[1]
+        end
     end
     return c
 end
