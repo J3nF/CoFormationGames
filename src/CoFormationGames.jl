@@ -26,7 +26,6 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
     c[t] = get_total_costs(G, a, x, α_c)
     Δc = 2 * ε
     while t < t_max || ε < Δc
-        c[t] = get_total_costs(G, a, x, α_c)
         if floor(t / r_c) > floor((t - 1) / r_c)
             x = get_opinion_update(G, x, ε)
         end
@@ -34,6 +33,9 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
             G, a = get_action_update(G, a, x, α_c)
         end
         t += 1
+        c[t+1] = get_total_costs(G, a, x, α_c)
+        Δc = c[t+1] - c[t]
+        println("t/t_max: \t$(t/$t_max), ε/Δc: \t$(ε/Δc)")
     end
     return c
 end
@@ -64,10 +66,10 @@ TBW
 Note the threshold check prevents premature convergence of 'run_game!'.
 """
 function check_opinion_update(node, G, x, ε)
-    c0 = get_opinion_costs(node, G, x)    
+    c0 = get_opinion_costs(node, G, x)
     x_tmp = copy(x)
-    k = Graphs.neighbors(G, node) 
-    x_tmp[node] =(mean(x[k]) + x[node]) / 2
+    k = Graphs.neighbors(G, node)
+    x_tmp[node] = (mean(x[k]) + x[node]) / 2
     c_tmp = get_opinion_costs(node, G, x_tmp)
     # Use update only if cost improvement is above threshold ε
     if c0 - c_tmp < ε
