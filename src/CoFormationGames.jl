@@ -12,7 +12,7 @@ Every r_c steps, a random node updates its opinion via get_opinion_update.
 Every r_g steps, a random node updates its connections via get_action_update.
 
 G: Graph
-a: Action profile
+a: Action profile matrix, storing edge sponsorships
 x: Vector, storing edge opinions
 r_c: Communication rate
 r_g: Float, Communication rate
@@ -24,10 +24,11 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
     t = 1
     c = zeros(t_max)
     c[t] = get_total_costs(G, a, x, α_c)
+    Δc = 2 * ε
     while t < t_max || ε < Δc
+        c[t] = get_total_costs(G, a, x, α_c)
         if floor(t / r_c) > floor((t - 1) / r_c)
-            node = rand(1:n)
-            x[node] = get_opinion_update(node, G, x)
+            x = get_opinion_update(G, x, ε)
         end
         if floor(t / r_g) > floor((t - 1) / r_g)
             G, a = get_action_update(G, a, x, α_c)
@@ -39,14 +40,42 @@ end
 
 
 """
-    get_opinion_update(node, G, x)
+    get_opinion_update(G, x, ε)
 
 Update a node's opinion by diffusing in neighbouring opinions.
 """
-function get_opinion_update(node, G, x)
-    k = Graphs.neighbors(G, node)
-    return (mean(x[k]) + x[node]) / 2
+function get_opinion_update(G, x, ε)
+    shuffled_nodes = Random.shuffle(1:length(x))
+    x_tmp = copy(x)
+    for i in shuffled_nodes
+        x_tmp[i] = check_opinion_update(i, G, x, ε)
+        if x_tmp[i] != x[i]
+            break
+        end
+    end
+    return x_tmp
 end
+
+"""
+    check_opinion_update(node, G, x, ε)
+
+TBW
+
+Note the threshold check prevents premature convergence of 'run_game!'.
+"""
+function check_opinion_update(node, G, x, ε)
+    c0 = get_opinion_costs(node, G, x)    
+    x_tmp = copy(x)
+    k = Graphs.neighbors(G, node) 
+    x_tmp[node] =(mean(x[k]) + x[node]) / 2
+    c_tmp = get_opinion_costs(node, G, x_tmp)
+    # Use update only if cost improvement is above threshold ε
+    if c0 - c_tmp < ε
+        x_tmp[node] = x[node]
+    end
+    return x_tmp[node]
+end
+
 
 """
     get_action_update(G, a, x)
