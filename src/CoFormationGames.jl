@@ -26,7 +26,7 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
     c = zeros(t_max)
     c[t] = get_total_costs(G, a, x, α_c)
     Δc = 2 * ε
-    while t < t_max || ε < Δc
+    while t < t_max && ε < Δc
         if floor(t / r_c) > floor((t - 1) / r_c)
             x = get_opinion_update(G, x, ε)
         end
@@ -35,10 +35,8 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
         end
         t += 1
         c[t] = get_total_costs(G, a, x, α_c)
-        Δc = c[t] - c[t-1]
-        if floor(t / 10) > floor((t - 1) / 10)
-            @Printf.printf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t/t_max, c[t]/c[1]
-        end
+        Δc = c[t-1] - c[t]
+        print(get_game_progress(t, c[1], c[t]))
     end
     return c
 end
@@ -172,5 +170,13 @@ function get_opinion_costs(node, G, x)
     k = Graphs.neighbors(G, node)
     return abs(x[node] .- x[k]) / length(k)
 end
+
+function print_game_progress(t, c_start, c_t)
+    if floor(t / 10) > floor((t - 1) / 10)
+        out_string = Printf.@printf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start
+    end
+    return out_string
+end
+
 
 end # module CoFormationGames

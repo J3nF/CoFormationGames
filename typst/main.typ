@@ -98,20 +98,16 @@ $ f^c_i (a) = - alpha_c norm(a_i) - 1/norm(k) sum_(j in K_i) abs(x_i-x_j) $ <eq:
   caption: [Dynamics of our synchronous move game],
 
   pseudocode-list[
-    + *while* $t<t_max$ 
-      + *if* $(mod(t,r_c) = 0 and epsilon < Delta c)$ *then*
-        + *for* $i in {1, dots, n}$ *do*
-          + get opinion update $Delta x$
-        + *end for*
-        + $x arrow.l x+Delta x$
+    + *while* $(t<t_max and epsilon < Delta c)$ 
+      + *if* $mod(t,r_c) = 0 $ *then*
+        + select random node $i$
+        + $x_i$ arrow.l get opinion update $x_i^u$
       + *end if*
       + *if* $r_f = 1$ *then*
-        + *for* $i in {1, dots, n}$ *do*
-          + get action update $Delta a$
-        + *end for*
-        + $a arrow.l a+Delta a$
+        + select random node $i$
+        + $a_i$ arrow.l get action update $a_i^u$
       + *end if*
-      + Get new costs $c_(t+1)$
+      + get new costs $c_(t+1)$
       + $Delta c = abs(c_(t+1) - c_t)$
       + $c_t arrow.l c_(t+1)$
       + $t arrow.l t+1$
