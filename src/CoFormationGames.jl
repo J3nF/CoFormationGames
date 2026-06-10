@@ -27,6 +27,9 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
     c[t] = get_total_costs(G, a, x, α_c)
     Δc = 2 * ε
     while t < t_max && ε < Δc
+        if floor(20 * t / t_max) > floor(20 * (t - 1) / t_max)
+            print(get_game_progress(t, t_max, c[1], c[t]))
+        end
         if floor(t / r_c) > floor((t - 1) / r_c)
             x = get_opinion_update(G, x, ε)
         end
@@ -36,8 +39,9 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
         t += 1
         c[t] = get_total_costs(G, a, x, α_c)
         Δc = c[t-1] - c[t]
-        print(get_game_progress(t, c[1], c[t]))
     end
+    print(get_game_progress(t, t_max, c[1], c[t]))
+    println("\nGame finished after $t steps.")
     return c
 end
 
@@ -171,10 +175,8 @@ function get_opinion_costs(node, G, x)
     return abs(x[node] .- x[k]) / length(k)
 end
 
-function print_game_progress(t, c_start, c_t)
-    if floor(t / 10) > floor((t - 1) / 10)
-        out_string = Printf.@printf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start
-    end
+function get_game_progress(t, t_max, c_start, c_t)
+    out_string = Printf.@printf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start
     return out_string
 end
 
