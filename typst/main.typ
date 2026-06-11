@@ -6,7 +6,10 @@
 #show: ieee.with(
   title: [ #todo Co-Formation Games],
   abstract: [
-    #todo
+This report proposes a novel model combining network creation studies and opinion dynamics.
+After introducing each Network Formation Games (NFGs) and Social Influence Models (SIMs), I compose a model allowing for co-evolution of opinions and networks and containing both NFGs and SIMs as special cases.
+Other sections consider basic dynamics, optimal states, and research directions of these Co-Formation Games (CFGs), as well as showcase an Julia module implementing CFGgames.
+Overall, the model offers a promising basis for future research projects, while broadening the perspective of NFGs and SIMs.
   ],
   authors: (
     (
@@ -38,8 +41,6 @@
 )
 
 = Introduction
-
-#todo
 
 == Paper overview
 
@@ -98,6 +99,7 @@ $ f^c_i (a) = - alpha_c norm(a_i) - 1/norm(k) sum_(j in K_i) abs(x_i-x_j) $ <eq:
   caption: [Dynamics of our synchronous move game],
 
   pseudocode-list[
+    + Initialise $t=1, c($
     + *while* $(t<t_max and epsilon < Delta c)$ 
       + *if* $mod(t,r_c) = 0 $ *then*
         + select random node $i$
@@ -107,10 +109,9 @@ $ f^c_i (a) = - alpha_c norm(a_i) - 1/norm(k) sum_(j in K_i) abs(x_i-x_j) $ <eq:
         + select random node $i$
         + $a_i$ arrow.l get action update $a_i^u$
       + *end if*
-      + get new costs $c_(t+1)$
-      + $Delta c = abs(c_(t+1) - c_t)$
-      + $c_t arrow.l c_(t+1)$
-      + $t arrow.l t+1$
+      + t += 1
+      + c(t) arrow.l get new costs $c_t$
+      + $Delta c = c_(t-1) - c(t)$
     + *end while*
   ]
 ) <alg:dynamics>
