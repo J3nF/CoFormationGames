@@ -4,7 +4,7 @@
 #import "@preview/lovelace:0.3.1": pseudocode-list
 
 #show: ieee.with(
-  title: [ #todo Co-Formation Games],
+  title: [ Co-Formation Games --- Unifying Network Formation and Opinion Dynamics ],
   abstract: [
 This report proposes a novel model combining network creation studies and opinion dynamics.
 After introducing each Network Formation Games (NFGs) and Social Influence Models (SIMs), I compose a model allowing for co-evolution of opinions and networks and containing both NFGs and SIMs as special cases.
@@ -56,21 +56,60 @@ Yet, even though there are works trying to combine some aspects of the other's i
 Moreover, there is still no work unifying both approaches in a way sheltering reults from both disciplines.
 
 This report explores a model which allows topology and opinions to influence each other, while including NFGs and SIMs as special cases.
-After presenting NFGs and SIMs, I present and justify each building block of the model, before assessing some basic traits with regard to possible dynamics, optimality and a simulation module implemented in the Julia programming language.
+After presenting NFGs and SIMs, this work presents and justifies each building block of the model, before assessing some basic traits with regard to possible dynamics, optimality and a simulation module implemented in the Julia programming language.
 
+= Background
 
+== Network Formation Games
 
-Network creation studies stylistic models of how networks evolve, e.g., social 
-networks. Opinion dynamics study how an opinion propagates through an existing 
-network. The latter suggests that the network impacts the opinion dynamics. 
-However, opinions may also influence what network connections form. The goal of 
-the project to come up with and study a model where network creation and opinion 
-propagation dynamically influence each other. The aim is to understand the co- 
-evolution of opinions and networks. Dependent on the interest of the student, 
-this question could be studied theoretically (e.g., describe the structure of 
-stable networks that evolve) or computationally (through simulations).
+- Consider personal utility-maximising agents
 
-= Methods <sec:methods>
+- Action: Establish or cut edge sponsorship
+
+- All actions (action profile) lead to Graph G(a), hooray.
+
+- Costs: Generally speaking, agents incur costs when sponsoring, and profit from closeness.
+-- Overall cost function design like this...
+- Stability concepts:
+-- Nash equilibrium: No agent can increase utility via a single step. Think local equilibrium.
+-- Optimal system: Graphs which minimise global costs.
+-- PoA...
+
+- Varieties:
+-- Laterality
+-- Directedness
+
+- In terms of overlapping research:
+-- Martin went for shapes ~ opinions or sth. That's it.
+
+== Social Influence Models
+
+(- Sidenote: Often used interchangibly with opinion dynamics, sorry Michael)
+
+- Basic idea: Agents have opinions. Interaction = opinion exchange => Consequence
+
+- Historically, most models are random interactions, i.e., have no topology.
+
+- Some simple models
+-- deGroot: Averaging real numbers
+-- Ising model: we are all discrete spins
+-- Modern stuff: Homophily, Similarity.
+--- Structure implied, but not specific.
+-- Bounded confidence et al. Because convergence was boring.
+ 
+- Criticisms: No model captures true human behaviour so far. Duh.
+
+- For our purpose: Edging closer to holistic model. No wish to capture human spirit or anything.
+- Rather, see "opinion" as label for local information connected to edge; "social" as nodes influence each other due to "personal" information.
+
+= The model --- Co-Formation Games <sec:CFG>
+
+- This section shows the choices. Considered alternatives are in the appendix.
+
+- Unilateral, Undirected
+-- TBW
+
+- 
 
 == Definitions & Equations
 
@@ -89,7 +128,9 @@ stable networks that evolve) or computationally (through simulations).
     [Set of $i$'s neighbours], [$K_i$], [$NN^norm(k_i)$],
     [Network graph #footnote[The graph is represented as an adjacency matrix.]], [$G$], [${0,1}^(n crossmark n)$],
     [Opinion], [$x_i$], [$RR$],
-    [Action profile], [$a_i$], [${0,1}^n$],
+    [Opinion profile], [$x$], [$RR^(n times n)$],
+    [Action], [$a_i$], [${0,1}^n$],
+    [Action profile], [$a$], [${0,1}^(n times n)$],
     [Costs per edge], [$alpha_c$], [$[0,infinity[$],
     [Pairwise distance], [$d_(i j)$], [$NN$],
     [Network valuation], [$v$], [ $]-infinity,0]$ ],
@@ -175,5 +216,5 @@ In @fig:sun you can see a common representation of the Sun, which is a star that
 ) <tab:planets>
 
 In @tab:planets, you see the planets of the solar system and their average distance from the Sun.
-The distances were calculated with @eq:costs that we presented in @sec:methods.
+The distances were calculated with @eq:costs that we presented in //@sec:methods.
 
