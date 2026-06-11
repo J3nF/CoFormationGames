@@ -42,9 +42,33 @@ Overall, the model offers a promising basis for future research projects, while 
 
 = Introduction
 
-== Paper overview
+Network dynamics plays an ever-important role in describing the modern world, with connective plasticity and local optimizations enabling the emergence of global order.
+Since this framework can describe a vast variety of phenomena, researchers employed numerous approaches --- often multidisciplinary ones --- to analyze these systems.
+Specifically, networks of human-like agents have been subject of studies ranging from mostly theoretical analysis to phenomenological social science works @Sobkowicz2020WhitherNO @Flache2017ModelsOS.
 
-#todo
+Even as the sheer numerousness has inspired some authors to question each model's marginal benefit , considering strangs of research showcases a lack of holistic perspectives @Sobkowicz2020WhitherNO:
+As a subfield of game theory, Network Formation Games (NFGs) study how self-interested agents create and drive the structure of networks @Fabrikant2003OnAN.
+In constrast, Social Influence Models (SIMs) focus on inner states of nodes (opinions) diffusing through it.
+In the case of social networks, this raises a tension: As opinion propagation and network formation can both be dynamic and influence each other, results from studies regarding only NFG or SIM do not necessarily generalize to the case of simultaneous dynamics.
+
+This is an important caveat, as real social network behaviour rarely reduces to the semi-static treatment implied by NFGs and SIMs.
+Yet, even though there are works trying to combine some aspects of the other's influence, they often do so as a small part of the original model's main mechanism (e.g., @Bullinger2022NetworkCW, @Baumann2019ModelingEC, @Nigam2018ONEMMT).
+Moreover, there is still no work unifying both approaches in a way sheltering reults from both disciplines.
+
+This report explores a model which allows topology and opinions to influence each other, while including NFGs and SIMs as special cases.
+After presenting NFGs and SIMs, I present and justify each building block of the model, before assessing some basic traits with regard to possible dynamics, optimality and a simulation module implemented in the Julia programming language.
+
+
+
+Network creation studies stylistic models of how networks evolve, e.g., social 
+networks. Opinion dynamics study how an opinion propagates through an existing 
+network. The latter suggests that the network impacts the opinion dynamics. 
+However, opinions may also influence what network connections form. The goal of 
+the project to come up with and study a model where network creation and opinion 
+propagation dynamically influence each other. The aim is to understand the co- 
+evolution of opinions and networks. Dependent on the interest of the student, 
+this question could be studied theoretically (e.g., describe the structure of 
+stable networks that evolve) or computationally (through simulations).
 
 = Methods <sec:methods>
 
