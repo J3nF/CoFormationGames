@@ -221,11 +221,16 @@ That being said, it may be that CFGs can reach NEs inaccessible to classical NFG
 == Co-evolution Algorithm
 
 Lastly, this section presents the explicit game dynamics.
-In order to start, a game needs initial action and opinion profiles $a, x$.
+After providing initial action and opinion profiles $a, x$, a game starts and proceeds in discrete time steps $t$.
 
+Rate parameters $r_x$ and $r_a$ determine the frequency of opinion and action updates.
+When an update is due, a random node $i$ gets to either update their opinion, or find an action update improving $c^"CFG"_i$.
+If there is no such action step, the game probes other nodes until it finds one or probed all agents, in which case no action update takes place.
 
-In pracice, a simulation ends after surpassing the allocated runtime or costs changing less than a threshold $epsilon$.
+While, theoretically, the game runs indefinitely, we can expect costs to converge after some time.
+In pracice, simulations end after surpassing the allocated runtime or total costs $c^"CFG"$ changing less than a threshold $epsilon$.
 
+This way, CFGs include both NFGs and SIMs as the special cases of $r_x=0$ and $r_a=0$, respectively, while allowing for a co-evolution of opinions and networks in the general case.
 
 #figure(
   kind: "algorithm",
@@ -236,7 +241,7 @@ In pracice, a simulation ends after surpassing the allocated runtime or costs ch
     + Initialise $a, x$
     + $Delta c = 2 epsilon$
     + *while* $(t<t_max and epsilon < Delta c)$ 
-      + *if* $mod(t,r_c) = 0 $ *then*
+      + *if* $mod(t,r_x) = 0 $ *then*
         + select random node $i$
         + $x_i arrow.l$ get opinion update $x_i^u$
       + *end if*
