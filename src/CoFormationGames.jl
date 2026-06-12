@@ -120,10 +120,10 @@ function check_actions(node, G, a, x, α_c, ε)
 
     for j in nodes_without_i
         G_tmp = get_changed_edge(G, node, j)
-        c_tmp = get_costs(node, G_tmp, a, x, α_c)
+        a_tmp = copy(a)
+        a_tmp[node, j] = 1 - a_tmp[node, j]
+        c_tmp = get_costs(node, G_tmp, a_tmp, x, α_c)
         if c_tmp < c_0 - ε
-            a_tmp = copy(a)
-            a_tmp[node, j] = 1 - a_tmp[node, j]
             return G_tmp, a_tmp
         end
     end
@@ -172,11 +172,16 @@ end
 
 function get_opinion_costs(node, G, x)
     k = Graphs.neighbors(G, node)
-    return abs(x[node] .- x[k]) / length(k)
+    if length(k) == 0
+        c_out = 0
+    else
+        c_out = abs(x[node] .- x[k]) / length(k)
+    end
+    return c_out
 end
 
 function get_game_progress(t, t_max, c_start, c_t)
-    out_string = Printf.@printf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start
+    out_string = Printf.@sprintf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start
     return out_string
 end
 
