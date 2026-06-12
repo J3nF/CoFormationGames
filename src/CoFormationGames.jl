@@ -42,6 +42,7 @@ function run_game(G, a, x, r_c, r_g, t_max, ε, α_c)
     end
     print(get_game_progress(t, t_max, c[1], c[t]))
     println("\nGame finished after $t steps.")
+    c = c[1:t]  # Trunctuate cost vector to actual game length
     return G, a, x, c
 end
 
