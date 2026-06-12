@@ -2,7 +2,7 @@
 
 julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "13def86429d1a839580fdcc6e50dfe2db6c9f06c"
+project_hash = "e25460b1fc199d1d94057ea24cb15b49002159d5"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
@@ -46,7 +46,7 @@ uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.18.7+0"
 
 [[deps.CoFormationGames]]
-deps = ["GraphPlot", "Graphs", "Plots", "Printf", "Random"]
+deps = ["GraphPlot", "Graphs", "Plots", "Printf", "Random", "Statistics"]
 path = "."
 uuid = "fb7d733c-1f05-4713-8d88-4c77b5d6a626"
 version = "0.1.0"
