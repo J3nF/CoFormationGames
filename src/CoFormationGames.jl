@@ -53,11 +53,12 @@ Update a node's opinion by diffusing in neighbouring opinions.
 """
 function get_opinion_update(G, x, ε)
     shuffled_nodes = Random.shuffle(1:length(x))
-    x_tmp = copy(x)
     for i in shuffled_nodes
-        x_tmp[i] = check_opinion_update(i, G, x, ε)
-        if x_tmp[i] != x[i]
-            return x_tmp
+        x_tmp = check_opinion_update(i, G, x, ε)
+        if x_tmp != x[i]
+            x_out = copy(x)
+            x_out[i] = x_flip
+            return x_out
         end
     end
     return x
@@ -78,9 +79,9 @@ function check_opinion_update(node, G, x, ε)
     c_tmp = get_opinion_costs(node, G, x_tmp)
     # Use update only if cost improvement is above threshold ε
     if c0 - c_tmp < ε
-        x_tmp[node] = x[node]
+        return x_tmp[node]
     end
-    return x_tmp[node]
+    return x[node]
 end
 
 
@@ -124,11 +125,9 @@ function check_actions(node, G, a, x, α_c, ε)
             a_tmp = copy(a)
             a_tmp[node, j] = 1 - a_tmp[node, j]
             return G_tmp, a_tmp
-        else
-            G_tmp = copy(G)
         end
     end
-    return G_tmp, a_tmp
+    return G, a
 end
 
 

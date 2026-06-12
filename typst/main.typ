@@ -75,7 +75,12 @@ $ c_i(a_i) = d_i (G) + alpha_c norm(a_i) $ <eq:cost_i>
 
 returns the cost an agent incurs, with $norm(dot)$ being the L1 norm.
 
-Because agents are unaware of the other game participants' actions (knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:cost_i), no explicit coordination is possible.
+The funciton $d_i$ conventionally depend on the choice of laterality and directedness @parkes2020algorithmic.
+Whereas (bi-/)unilaterality implies edge creation to need one (both) nodes' sponsorship, (un)directed networks let one (both) nodes use a single edge to traverse paths.
+Commonly, $d_i$ uses the shortest-path distances or the number of reachable nodes, depending.
+The definition of our model's $d_i$ is provided when our model is introduced
+
+Because agents are unaware of the other game participants' actions while deciding on an action --- knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:cost_i --- no explicit coordination is possible.
 Instead, step-wise adaptions of $a_i$ are taken to reduce costs, until there is no single sponsorship change left which improves costs.
 These final states $a^star$ are so-called Nash equilibria (NEs).
 They correspond to the concept of local stability, and a big portion NFG-related research devotes itself to analyzing the set of NEs and NE traits.
