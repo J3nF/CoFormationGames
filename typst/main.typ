@@ -68,26 +68,26 @@ An action profile $a$ --- storing every single agent $i$'s decisions $a_i$ --- c
 
 (Since agents are always treated as part of a graph, the following text uses _agent_, _node_ and _vertex_ interchangibly, unless noted otherwise.) 
 
-The cost funciton $c(a_i)$ which each agent wishes to minimize imposes costs $alpha_c$ on each connection sponsored, but encourages connectedness by punishing a distance measure of $i$ in the graph, $d_i (G)$.
+The cost funciton $c(a_i)$ which each agent wishes to minimize imposes costs $alpha_c$ on each connection sponsored, but encourages connectedness by punishing a distance measure of $i$ in the graph, $c^d_i (G)$.
 When agent $i$ sponsors an edge to $j$, we set $a_(i j) = 1$, and $a_(i j) = 0$ otherwise, so that
 
-$ c_i(a_i) = d_i (G) + alpha_c norm(a_i) $ <eq:cost_i>
+$ c^"NFG"_i (a_i) = c^d_i (G) + alpha_a norm(a_i) $ <eq:cost_i>
 
 returns the cost an agent incurs, with $norm(dot)$ being the L1 norm.
 
-The funciton $d_i$ conventionally depend on the choice of laterality and directedness @parkes2020algorithmic.
+The funciton $c^d_i (G)$ conventionally depend on the choice of laterality and directedness @parkes2020algorithmic.
 Whereas (bi-/)unilaterality implies edge creation to need one (both) nodes' sponsorship, (un)directed networks let one (both) nodes use a single edge to traverse paths.
-Commonly, $d_i$ uses the shortest-path distances or the number of reachable nodes, depending.
-The definition of our model's $d_i$ is provided when our model is introduced
+Commonly, $c^d_i (G)$ uses the shortest-path distances or the number of reachable nodes, but depends on network choices made later in this report.
+Thus, the definition of the distance costs is provided when our model is introduced in section @sec:CFG.
 
-Because agents are unaware of the other game participants' actions while deciding on an action --- knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:cost_i --- no explicit coordination is possible.
+Because agents are unaware of the other game participants' actions when deciding on an action --- knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:cost_i --- there is no room for coordination.
 Instead, step-wise adaptions of $a_i$ are taken to reduce costs, until there is no single sponsorship change left which improves costs.
 These final states $a^star$ are so-called Nash equilibria (NEs).
 They correspond to the concept of local stability, and a big portion NFG-related research devotes itself to analyzing the set of NEs and NE traits.
 
 Since costs are minimised locally and step-wise, a configuration which minimizes the total cost
 
-$ c(a) = sum_(i=1)^n c_i (a_i) = d(G) + alpha_c norm(a) $
+$ c(a) = sum_(i=1)^n c_i (a_i) = c_d (G) + alpha_c norm(a) $
 
 may be unreachable:
 
@@ -98,10 +98,6 @@ This relates to the Price of Anarchy, which presents how costly selfish strategi
 $ "PoA"(Gamma) = max_(a^star) C(a^star) / C(a^"opt") . $
 
 Overall, while there are many studies regarding optimality considerations for NFGs in terms of topolgoy @Bil2017OnTT @parkes2020algorithmic and some research weighing costs by categorical opinions @Bullinger2022NetworkCW, NFGs are yet to include explicit information propagation their dynamics.
-
-- Varieties:
--- Laterality
--- Directedness
 
 == Social Influence Models
 
@@ -124,17 +120,67 @@ Therefore, models are incapable of deducing social topologies from first princip
 #todo
 - Rather, see "opinion" as label for local information connected to edge; "social" as nodes influence each other due to "personal" information.
 
-= The model --- Co-Formation Games <sec:CFG>
+= Co-Formation Games Model <sec:CFG>
 
-This section summarizes the model choices we made after 
-After reviewing both NFG and SIM literature
+This section summarizes the model choices we made for our Co-Formation Games (CFG) after reviewing both NFG and SIM literature.
 
-- This section shows the choices. Considered alternatives are in the appendix.
+Firstly, edges are undirected, as communication commonly involves bidirectonal information flow @Flache2017ModelsOS.
+Similarily, unilateral sponsorship suffices for edge creation in the model to account for the fact that communication can be initiated by one party in SIMs.
+Obviously, there are scenarioes which are better covered by alternative choices.
+Next to intuition, though, undirected and unilateral games are a simple choice, which seemed appropriate given the projects short time frame.
 
-- Unilateral, Undirected
--- TBW
+The distance cost function then, following the conventional choice for unilateral, undirected NFGs @parkes2020algorithmic, becomes the negated total distance,
 
--  ....... (basically write down notebook page)
+$ c^d_i (G) = sum_(j eq.not i) d_(i j) , $ <eq:d_ij>
+
+with $d_(i j)$ being the shortest pairwise distance.
+Note that unconnected graphs will suffer infinite costs. 
+
+Furthermore, it is worth mentioning that undirected, unilateral NFGs optimal configurations contain only the fully connected and star graphs for positve edge costs $alpha_c eq.not 2$.
+One goal of our model, then, can be to find new optimal networks.
+
+Let us now regard decisions on opinion dynamics, for which simplicity was an important factor, as choosing a well-understood SIM eases the attribution and understanding of results to stem from CFGs' co-evolution dynamic.
+We define an opinion to be a real number which, when updated, gets averaged with the neighbours' opinions.
+This follows the classical deGroot mechanism @Degroot1974ReachingAC.
+While bound to converge, this guarantees stability of the opinion landscape, which is a necessary condition for overall stability in a CFG.
+
+We denote agent $i$'s opinion as $x_i$, which then gives the deGroot opinion update as
+
+$ x_i^"new" = (x_i + chevron.l x_j chevron.r_(K_i) ) / 2 . $
+
+where
+
+$ K_i = {j}_(d_(i j) = 1) $
+
+is the set of $i$'s neighbours.
+
+Further, the opinion profile $x$ refers to the collection of all opinions ${x_i}_(i=1,...,n)$.
+
+To incorporate SIM into the NFG, we introduce an opinion-based cost term 
+
+$ c^x (x,G) = 1/norm(K_i) sum_(j in K_i) abs(x_i-x_j) . $ <eq:sim-costs>
+
+and define the overall cost function to consist out of
+
+$
+c^"CFG"_i (a,x) 
+  &= c^d_i (G) + c^a_i (a_i) + c^x_i (x,G) \
+  &= sum_(j eq.not i) d_(i j) + alpha_a norm(a_i) + 1/norm(K_i) sum_(j in K_i) abs(x_i-x_j)
+$ 
+
+for a single agent, and system-wides costs
+
+$ c^"CFG" (a,x) = sum_(i=1)^n c^"CFG"_i (a,x) . $
+
+It follows that nodes have to balance their original NFG goal with the minimisation of neighborhood polarisation.
+
+Note how, whereas distance costs foster sponsorship and edge costs imply sparsity, the opinion term's effect can be ambiguous and context-sensitive.
+Sometimes dropping a connection to a disagreeing agent may minimise costs, while denser neighborhoods (when dropping a single edge makes little difference) can lead to sponsorships to other agreeing nodes.
+Also, the probability of a node extending or reducing their sponsorships depends on the network-wide opinion profile $x$ for agents happy to choose any cost-reducing step:
+If the majority of other agents disagree, there are few worthwile edges whose creation reduced $c_i$, and vice versa.
+
+Considering @eqthe case of total opinion convergence $abs(x_i-x_j)=0 forall i,j$ leads to the original NFG costs.
+
 
 == Definitions & Equations
 
@@ -151,19 +197,21 @@ After reviewing both NFG and SIM literature
     [Number of nodes], [$n$], [$NN$],
     [Node of concern], [$i$], [${1, dots, n}$],
     [Set of $i$'s neighbours], [$K_i$], [$NN^norm(k_i)$],
-    [Network graph #footnote[The graph is represented as an adjacency matrix.]], [$G$], [${0,1}^(n crossmark n)$],
+    [Network graph], [$G$], [${0,1}^(n crossmark n)$],
     [Opinion], [$x_i$], [$RR$],
-    [Opinion profile], [$x$], [$RR^(n times n)$],
+    [Opinion profile], [$x$], [$RR^n$],
     [Action], [$a_i$], [${0,1}^n$],
     [Action profile], [$a$], [${0,1}^(n times n)$],
-    [Costs per edge], [$alpha_c$], [$[0,infinity[$],
+    [Distance costs], [$c^d$], [ $ZZ^-$ ],
     [Pairwise distance], [$d_(i j)$], [$NN$],
-    [Network valuation], [$v$], [ $]-infinity,0]$ ],
-    [Network expenses], [$f^c$],  [ $]-infinity,0[$ ],
-    [Cost function], [$c$], [ $]-infinity,0[$ ],      // Usually called utility u, but negative domain, so swap symbols
-    [Communication rate], [$r_c$], [$[0, infinity[$],
-    [Formation rate], [$r_f$], [${0,1}$],
-    [Convergence threshold], [$epsilon$], [#todo[Up for discussion]$[0,alpha_c]$],
+    [Sponsorship costs], [$c^a$],  [ $]-infinity,0[$ ],
+    [Costs per edge], [$alpha_c$], [ $]0,infinity[$ ],
+    [Opinion costs], [$c^x$], [ $]-infinity,0[$ ],
+    [Opinion range], [$alpha_x$], [$RR^+$],
+    [Set of $i$'s neighbours], [$K_i$], [$NN$],
+    [Communication rate], [$r_c$], [ $[0, infinity[$ ],
+    [Action rate], [$r_a$], [${0,1}$],
+    [Convergence threshold], [$epsilon$], [ $]0,alpha_c]$ ],
   ),
   caption: [List of variables used in this document],
 ) <tab:variables>
@@ -172,14 +220,8 @@ where a norm $norm( dot )$ is the L0 norm, returning the count of non-zero eleme
 
 === Equations
 
-- Cost function
-$ c_i = v_i (a) + f^c (a) $ <eq:costs>
-
-- Valuation function
-$ v_i (a) = - sum_(j = 1,dots,n) d_(i j) $ <eq:valuation>
 
 - Network expenses:
-$ f^c_i (a) = - alpha_c norm(a_i) - 1/norm(k) sum_(j in K_i) abs(x_i-x_j) $ <eq:network-costs>
 
 === Algorithm
 
@@ -189,7 +231,7 @@ $ f^c_i (a) = - alpha_c norm(a_i) - 1/norm(k) sum_(j in K_i) abs(x_i-x_j) $ <eq:
   caption: [Dynamics of our synchronous move game],
 
   pseudocode-list[
-    + Initialise $t=1, c($
+    + Initialise $t=1, G, a, x, Delta c$
     + *while* $(t<t_max and epsilon < Delta c)$ 
       + *if* $mod(t,r_c) = 0 $ *then*
         + select random node $i$
@@ -256,5 +298,4 @@ In @fig:sun you can see a common representation of the Sun, which is a star that
 ) <tab:planets>
 
 In @tab:planets, you see the planets of the solar system and their average distance from the Sun.
-The distances were calculated with @eq:costs that we presented in //@sec:methods.
-
+The distances were calculated with @eq:sim-costs that we presented in //@sec:methods.
