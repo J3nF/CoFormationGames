@@ -3,6 +3,11 @@ module CoFormationGames
 import Graphs
 import Printf
 import Random
+import Statistics: mean
+
+
+
+export run_game, get_opinion_update, get_action_update, get_costs, get_total_costs, get_opinion_costs
 
 """
     run_game(G, a, x, r_c, r_g, t_max, ε, α_c)
@@ -28,7 +33,7 @@ function run_game(G, a, x, r_c, r_g, t_max, ε, α_c)
     Δc = 2 * ε
     while t < t_max && ε < Δc
         if floor(20 * t / t_max) > floor(20 * (t - 1) / t_max)
-            print(get_game_progress(t, t_max, c[1], c[t]))
+            println(get_game_progress(t, t_max, c[1], c[t]))
         end
         if r_c > 0 && floor(t / r_c) > floor((t - 1) / r_c)
             x = get_opinion_update(G, x, ε)
