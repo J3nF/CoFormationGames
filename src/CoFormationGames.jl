@@ -178,7 +178,7 @@ function get_opinion_costs(node, G, x)
     if length(k) == 0
         c_out = 0
     else
-        c_out = abs(x[node] .- x[k]) / length(k)
+        c_out = mean(abs.(x[k].-x[node]))
     end
     return c_out
 end
