@@ -30,10 +30,10 @@ function run_game(G, a, x, r_c, r_g, t_max, ε, α_c)
         if floor(20 * t / t_max) > floor(20 * (t - 1) / t_max)
             print(get_game_progress(t, t_max, c[1], c[t]))
         end
-        if floor(t / r_c) > floor((t - 1) / r_c)
+        if r_c != 0 && floor(t / r_c) > floor((t - 1) / r_c)
             x = get_opinion_update(G, x, ε)
         end
-        if floor(t / r_g) > floor((t - 1) / r_g)
+        if r_g != 0 && floor(t / r_g) > floor((t - 1) / r_g)
             G, a = get_action_update(G, a, x, α_c, ε)
         end
         t += 1
