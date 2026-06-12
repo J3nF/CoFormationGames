@@ -75,6 +75,9 @@ function check_opinion_update(node, G, x, ε)
     c0 = get_opinion_costs(node, G, x)
     x_tmp = copy(x)
     k = Graphs.neighbors(G, node)
+    if length(k) == 0
+        return x[node]
+    end
     x_tmp[node] = (mean(x[k]) + x[node]) / 2
     c_tmp = get_opinion_costs(node, G, x_tmp)
     # Use update only if cost improvement is above threshold ε
@@ -155,11 +158,11 @@ function get_costs(node, G, a, x, α_c) # I could make this and the total cost f
     c_distances = sum(Graphs.desopo_pape_shortest_paths(G, node))
     c_edges = α_c * sum(a[node, :])
     c_opinion = get_opinion_costs(node, G, x)
-    return -(c_distances + c_edges + c_opinion)
+    return c_distances + c_edges + c_opinion
 end
 
 """
-    get_total_costs(G, x)
+    get_total_costs(G, a, x, α_c)
 
 TBW
 """
@@ -167,7 +170,7 @@ function get_total_costs(G, a, x, α_c)
     Σ_distances = sum(Graphs.floyd_warshall_shortest_paths(G).dists)
     Σ_edges = α_c * sum(a)
     Σ_opinion = sum(get_opinion_costs(i, G, x) for i in 1:length(x))
-    return -(Σ_distances + Σ_edges + Σ_opinion)
+    return Σ_distances + Σ_edges + Σ_opinion
 end
 
 function get_opinion_costs(node, G, x)
