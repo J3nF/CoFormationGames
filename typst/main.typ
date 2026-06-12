@@ -7,7 +7,7 @@
   title: [ Co-Formation Games --- Unifying Network Formation and Opinion Dynamics ],
   abstract: [
 This report proposes a novel model combining network creation studies and opinion dynamics.
-After introducing each Network Formation Games (NFGs) and Social Influence Models (SIMs), I compose a model allowing for co-evolution of opinions and networks and containing both NFGs and SIMs as special cases.
+After introducing each Network Formation Games (NFGs) and Social Influence Models (SIMs), we compose a model allowing for co-evolution of opinions and networks and containing both NFGs and SIMs as special cases.
 Other sections consider basic dynamics, optimal states, and research directions of these Co-Formation Games (CFGs), as well as showcase an Julia module implementing CFGgames.
 Overall, the model offers a promising basis for future research projects, while broadening the perspective of NFGs and SIMs.
   ],
@@ -101,29 +101,28 @@ Overall, while there are many studies regarding optimality considerations for NF
 == Social Influence Models
 
 Social Influence Models (SIMs) investigate how agents interacting with each other may adapt their behaviour due to those interaction, given some theoretical simplifications.
+While rooted in social sciences @Degroot1974ReachingAC, the field captured some interest from the hard science theorists, who borrowed models and tools for the interdisciplinary field they call _sociophysics_ or opinion modelling @Sobkowicz2020WhitherNO.
 
+After exhausting hopes of physic's "hard-science" reductionist models inspiring correct descriptions of human interactions, the field underwent a shift towards Agent-based models (ABMs) @Sobkowicz2020WhitherNO, which identify humans as agents following an algorithm to exchange and update information.
 
+Next to defining the domain opinions are drawn from (numerical/categorical, dimsensionality), an update rule describing how to adapt held opinions given an interaciton is at the core of ABMs.
+The deGroot model is an established choice, boiling down to interactions leading to averaging of continuous numerical opinions @Degroot1974ReachingAC.
+As perfect averaging eventually makes opinions converge and disregards human biases, other approaches let updates depend on proximity of opinions, which enables polarized stable states (e.g., @Friedkin2011SocialIN, @Baumann2019ModelingEC).
+While richer dynamics and patterns ensue, it is not trivial how much, if any, practical utility such models offer.
+Hence, multiple reviews stress the necessity of exercising caution to properly justify the introduction of novel update mechanisms.
 
+Regarding the network structure, most ABMs assume either communication to take place by random chance or place agents in a fixed topology @Sobkowicz2020WhitherNO.
+As a middle-ground, some incorporate homophily (the preference to contact similar agents) by biasing communication rates towards others with similar opinions @Baumann2019ModelingEC.
+Overall, though, contact structures are either seen as fixed or only change as the consequence of social influences.
+Therefore, models are incapable of deducing social topologies from first principles per se (i.e., in scenarioes without explicit communication).
 
-(- Sidenote: Often used interchangibly with opinion dynamics, sorry Michael)
-
-- Basic idea: Agents have opinions. Interaction = opinion exchange => Consequence
-
-- Historically, most models are random interactions, i.e., have no topology.
-
-- Some simple models
--- deGroot: Averaging real numbers
--- Ising model: we are all discrete spins
--- Modern stuff: Homophily, Similarity.
---- Structure implied, but not specific.
--- Bounded confidence et al. Because convergence was boring.
- 
-- Criticisms: No model captures true human behaviour so far. Duh.
-
-- For our purpose: Edging closer to holistic model. No wish to capture human spirit or anything.
+#todo
 - Rather, see "opinion" as label for local information connected to edge; "social" as nodes influence each other due to "personal" information.
 
 = The model --- Co-Formation Games <sec:CFG>
+
+This section summarizes the model choices we made after 
+After reviewing both NFG and SIM literature
 
 - This section shows the choices. Considered alternatives are in the appendix.
 
