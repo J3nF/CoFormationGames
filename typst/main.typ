@@ -71,7 +71,7 @@ An action profile $a$ --- storing every single agent $i$'s decisions $a_i$ --- c
 The cost funciton $c(a_i)$ which each agent wishes to minimize imposes costs $alpha_c$ on each connection sponsored, but encourages connectedness by punishing a distance measure of $i$ in the graph, $c^d_i (G)$.
 When agent $i$ sponsors an edge to $j$, we set $a_(i j) = 1$, and $a_(i j) = 0$ otherwise, so that
 
-$ c^"NFG"_i (a_i) = c^d_i (G) + alpha_a norm(a_i) $ <eq:cost_i>
+$ c^"NFG"_i (a_i) = c^d_i (G) + alpha_a norm(a_i) $ <eq:c_i>
 
 returns the cost an agent incurs, with $norm(dot)$ being the L1 norm.
 
@@ -80,7 +80,7 @@ Whereas (bi-/)unilaterality implies edge creation to need one (both) nodes' spon
 Commonly, $c^d_i (G)$ uses the shortest-path distances or the number of reachable nodes, but depends on network choices made later in this report.
 Thus, the definition of the distance costs is provided when our model is introduced in section @sec:CFG.
 
-Because agents are unaware of the other game participants' actions when deciding on an action --- knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:cost_i --- there is no room for coordination.
+Because agents are unaware of the other game participants' actions when deciding on an action --- knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:c_i --- there is no room for coordination.
 Instead, step-wise adaptions of $a_i$ are taken to reduce costs, until there is no single sponsorship change left which improves costs.
 These final states $a^star$ are so-called Nash equilibria (NEs).
 They correspond to the concept of local stability, and a big portion NFG-related research devotes itself to analyzing the set of NEs and NE traits.
@@ -120,9 +120,11 @@ Therefore, models are incapable of deducing social topologies from first princip
 #todo
 - Rather, see "opinion" as label for local information connected to edge; "social" as nodes influence each other due to "personal" information.
 
-= Co-Formation Games Model <sec:CFG>
+= Co-Formation Games <sec:CFG>
 
 This section summarizes the model choices we made for our Co-Formation Games (CFG) after reviewing both NFG and SIM literature.
+
+== Mathematical Model
 
 Firstly, edges are undirected, as communication commonly involves bidirectonal information flow @Flache2017ModelsOS.
 Similarily, unilateral sponsorship suffices for edge creation in the model to account for the fact that communication can be initiated by one party in SIMs.
@@ -146,7 +148,7 @@ While bound to converge, this guarantees stability of the opinion landscape, whi
 
 We denote agent $i$'s opinion as $x_i$, which then gives the deGroot opinion update as
 
-$ x_i^"new" = (x_i + chevron.l x_j chevron.r_(K_i) ) / 2 . $
+$ x_i^"new" = (x_i + chevron.l x_j chevron.r_(K_i) ) / 2 . $ <eq:degroot>
 
 where
 
@@ -158,7 +160,7 @@ Further, the opinion profile $x$ refers to the collection of all opinions ${x_i}
 
 To incorporate SIM into the NFG, we introduce an opinion-based cost term 
 
-$ c^x (x,G) = 1/norm(K_i) sum_(j in K_i) abs(x_i-x_j) . $ <eq:sim-costs>
+$ c^x (x,G) = 1/norm(K_i) sum_(j in K_i) abs(x_i-x_j) . $ <eq:c_x>
 
 and define the overall cost function to consist out of
 
@@ -166,9 +168,9 @@ $
 c^"CFG"_i (a,x) 
   &= c^d_i (G) + c^a_i (a_i) + c^x_i (x,G) \
   &= sum_(j eq.not i) d_(i j) + alpha_a norm(a_i) + 1/norm(K_i) sum_(j in K_i) abs(x_i-x_j)
-$ 
+$ <eq:c_cfg>
 
-for a single agent, and system-wides costs
+for a single agent, and system-wide costs
 
 $ c^"CFG" (a,x) = sum_(i=1)^n c^"CFG"_i (a,x) . $
 
@@ -179,10 +181,9 @@ Sometimes dropping a connection to a disagreeing agent may minimise costs, while
 Also, the probability of a node extending or reducing their sponsorships depends on the network-wide opinion profile $x$ for agents happy to choose any cost-reducing step:
 If the majority of other agents disagree, there are few worthwile edges whose creation reduced $c_i$, and vice versa.
 
-Considering @eqthe case of total opinion convergence $abs(x_i-x_j)=0 forall i,j$ leads to the original NFG costs.
-
-
-== Definitions & Equations
+With regard to long-term dynamics, consider how @eq:c_x vanishes in the case of total opinion convergence $abs(x_i-x_j)=0 forall i,j $, reducing  @eq:c_cfg to the original NFG cost <eq:cost_i>.
+Given deGroot's opinion averaging and distance costs enforcing connected networks, CFGs have the same set of theoretical long-term Nash equilibria as NFGs.
+That being said, it may be that CFGs can reach NEs inaccessible to classical NFGs.
 
 #figure(
   table(
@@ -213,39 +214,42 @@ Considering @eqthe case of total opinion convergence $abs(x_i-x_j)=0 forall i,j$
     [Action rate], [$r_a$], [${0,1}$],
     [Convergence threshold], [$epsilon$], [ $]0,alpha_c]$ ],
   ),
-  caption: [List of variables used in this document],
+  caption: [List of variables used in Co-Formation Games],
+  placement: auto,
 ) <tab:variables>
 
-where a norm $norm( dot )$ is the L0 norm, returning the count of non-zero elements.
+== Co-evolution Algorithm
 
-=== Equations
+Lastly, this section presents the explicit game dynamics.
+In order to start, a game needs initial action and opinion profiles $a, x$.
 
 
-- Network expenses:
+In pracice, a simulation ends after surpassing the allocated runtime or costs changing less than a threshold $epsilon$.
 
-=== Algorithm
 
 #figure(
   kind: "algorithm",
   supplement: [Algorithm],
-  caption: [Dynamics of our synchronous move game],
+  caption: [Schematic CFG algorithm pseudocode. Note this algorithm expects node $i$ to have a cost-reducing action step available, whereas the actual implementation looks through nodes until it found one such step or probed all agents.],
 
   pseudocode-list[
-    + Initialise $t=1, G, a, x, Delta c$
+    + Initialise $a, x$
+    + $Delta c = 2 epsilon$
     + *while* $(t<t_max and epsilon < Delta c)$ 
       + *if* $mod(t,r_c) = 0 $ *then*
         + select random node $i$
-        + $x_i$ arrow.l get opinion update $x_i^u$
+        + $x_i arrow.l$ get opinion update $x_i^u$
       + *end if*
-      + *if* $r_f = 1$ *then*
+      + *if* $mod(t,r_f) = 0$ *then*
         + select random node $i$
-        + $a_i$ arrow.l get action update $a_i^u$
+          + $a_i arrow.l$ get action update $a_i^u$
       + *end if*
       + t += 1
-      + c(t) arrow.l get new costs $c_t$
+      + $c(t) arrow.l$ get new costs $c_t$
       + $Delta c = c_(t-1) - c(t)$
     + *end while*
-  ]
+  ],
+  placement: auto,
 ) <alg:dynamics>
 
 = Introductory examples
@@ -296,6 +300,3 @@ In @fig:sun you can see a common representation of the Sun, which is a star that
     [Neptune], [4,495.1],
   )
 ) <tab:planets>
-
-In @tab:planets, you see the planets of the solar system and their average distance from the Sun.
-The distances were calculated with @eq:sim-costs that we presented in //@sec:methods.
