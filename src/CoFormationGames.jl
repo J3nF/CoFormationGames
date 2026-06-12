@@ -34,7 +34,7 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
             x = get_opinion_update(G, x, ε)
         end
         if floor(t / r_g) > floor((t - 1) / r_g)
-            G, a = get_action_update(G, a, x, α_c)
+            G, a = get_action_update(G, a, x, α_c, ε)
         end
         t += 1
         c[t] = get_total_costs(G, a, x, α_c)
@@ -57,10 +57,10 @@ function get_opinion_update(G, x, ε)
     for i in shuffled_nodes
         x_tmp[i] = check_opinion_update(i, G, x, ε)
         if x_tmp[i] != x[i]
-            break
+            return x_tmp
         end
     end
-    return x_tmp
+    return x
 end
 
 """
@@ -85,33 +85,33 @@ end
 
 
 """
-    get_action_update(G, a, x)
+    get_action_update(G, a, x, α_c, ε)
 
 Check whether a new action (establishing or cancelling the sponsorship of an
 edge) could improve the node's costs.
 
 Subscripts '_tmp' signify variables assuming an action to take place.
 """
-function get_action_update(G, a, x, α_c)
+function get_action_update(G, a, x, α_c, ε)
     shuffled_nodes = Random.shuffle(1:length(x))
     for i in shuffled_nodes
-        G_tmp, a_tmp = check_actions(i, G, a, x, α_c)
+        G_tmp, a_tmp = check_actions(i, G, a, x, α_c, ε)
         if (G_tmp, a_tmp) != (G, a)
-            break
+            return G_tmp, a_tmp
         end
     end
-    return G_tmp, a_tmp
+    return G, a
 end
 
 """
-    check_actions(node, G, a, x)
+    check_actions(node, G, a, x, α_c, ε)
 
 Iterate through node's sponsorship actions until finding a positive one.
 If no helpful action is possible, return zero.
 
 Subscripts '_tmp' signify variables assuming an action to take place.
 """
-function check_actions(node, G, a, x, α_c)
+function check_actions(node, G, a, x, α_c, ε)
     # Define an iterator over all but the current node
     nodes_without_i = cat(1:node-1, node+1:length(x), dims=1)
     Random.shuffle!(nodes_without_i)
@@ -120,9 +120,10 @@ function check_actions(node, G, a, x, α_c)
     for j in nodes_without_i
         G_tmp = get_changed_edge(G, node, j)
         c_tmp = get_costs(node, G_tmp, a, x, α_c)
-        if c_tmp < c_0
+        if c_tmp < c_0 - ε
             a_tmp = copy(a)
             a_tmp[node, j] = 1 - a_tmp[node, j]
+            return G_tmp, a_tmp
         else
             G_tmp = copy(G)
         end
