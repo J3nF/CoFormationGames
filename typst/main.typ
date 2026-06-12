@@ -48,7 +48,7 @@ Specifically, networks of human-like agents have been subject of studies ranging
 
 Even as the sheer numerousness has inspired some authors to question each model's marginal benefit , considering strangs of research showcases a lack of holistic perspectives @Sobkowicz2020WhitherNO:
 As a subfield of game theory, Network Formation Games (NFGs) study how self-interested agents create and drive the structure of networks @Fabrikant2003OnAN.
-In constrast, Social Influence Models (SIMs) focus on inner states of nodes (opinions) diffusing through it.
+In constrast, Social Influence Models (SIMs) focus on inner states of nodes (opinions) diffusing through it @Flache2017ModelsOS.
 In the case of social networks, this raises a tension: As opinion propagation and network formation can both be dynamic and influence each other, results from studies regarding only NFG or SIM do not necessarily generalize to the case of simultaneous dynamics.
 
 This is an important caveat, as real social network behaviour rarely reduces to the semi-static treatment implied by NFGs and SIMs.
@@ -62,27 +62,48 @@ After presenting NFGs and SIMs, this work presents and justifies each building b
 
 == Network Formation Games
 
-- Consider personal utility-maximising agents
+Introduced as a subfield of Game Theory, Network Formation Games (NFGs) consider agents acting strategically to maximize personal utilities / minimize costs @Fabrikant2003OnAN.
+In NFGs, the action agents can decide on is whether or not to sponsor connections to an other agent.
+An action profile $a$ --- storing every single agent $i$'s decisions $a_i$ --- consequently produces a graph $G(a)$ in which nodes represent agents and edges @parkes2020algorithmic.
 
-- Action: Establish or cut edge sponsorship
+(Since agents are always treated as part of a graph, the following text uses _agent_, _node_ and _vertex_ interchangibly, unless noted otherwise.) 
 
-- All actions (action profile) lead to Graph G(a), hooray.
+The cost funciton $c(a_i)$ which each agent wishes to minimize imposes costs $alpha_c$ on each connection sponsored, but encourages connectedness by punishing a distance measure of $i$ in the graph, $d_i (G)$.
+When agent $i$ sponsors an edge to $j$, we set $a_(i j) = 1$, and $a_(i j) = 0$ otherwise, so that
 
-- Costs: Generally speaking, agents incur costs when sponsoring, and profit from closeness.
--- Overall cost function design like this...
-- Stability concepts:
--- Nash equilibrium: No agent can increase utility via a single step. Think local equilibrium.
--- Optimal system: Graphs which minimise global costs.
--- PoA...
+$ c_i(a_i) = d_i (G) + alpha_c norm(a_i) $ <eq:cost_i>
+
+returns the cost an agent incurs, with $norm(dot)$ being the L1 norm.
+
+Because agents are unaware of the other game participants' actions (knowledge  of $a$ and the resulting network $G(a)$ is only implicit in @eq:cost_i), no explicit coordination is possible.
+Instead, step-wise adaptions of $a_i$ are taken to reduce costs, until there is no single sponsorship change left which improves costs.
+These final states $a^star$ are so-called Nash equilibria (NEs).
+They correspond to the concept of local stability, and a big portion NFG-related research devotes itself to analyzing the set of NEs and NE traits.
+
+Since costs are minimised locally and step-wise, a configuration which minimizes the total cost
+
+$ c(a) = sum_(i=1)^n c_i (a_i) = d(G) + alpha_c norm(a) $
+
+may be unreachable:
+
+$ a^"opt" = arg min_a c(a) <= arg min_(a^star) c(a^star) . $
+
+This relates to the Price of Anarchy, which presents how costly selfish strategies end up being relative to game $Gamma$'s optimum costs profile,
+
+$ "PoA"(Gamma) = max_(a^star) C(a^star) / C(a^"opt") . $
+
+Overall, while there are many studies regarding optimality considerations for NFGs in terms of topolgoy @Bil2017OnTT @parkes2020algorithmic and some research weighing costs by categorical opinions @Bullinger2022NetworkCW, NFGs are yet to include explicit information propagation their dynamics.
 
 - Varieties:
 -- Laterality
 -- Directedness
 
-- In terms of overlapping research:
--- Martin went for shapes ~ opinions or sth. That's it.
-
 == Social Influence Models
+
+Social Influence Models (SIMs) investigate how agents interacting with each other may adapt their behaviour due to those interaction, given some theoretical simplifications.
+
+
+
 
 (- Sidenote: Often used interchangibly with opinion dynamics, sorry Michael)
 
@@ -109,7 +130,7 @@ After presenting NFGs and SIMs, this work presents and justifies each building b
 - Unilateral, Undirected
 -- TBW
 
-- 
+-  ....... (basically write down notebook page)
 
 == Definitions & Equations
 
@@ -180,6 +201,21 @@ $ f^c_i (a) = - alpha_c norm(a_i) - 1/norm(k) sum_(j in K_i) abs(x_i-x_j) $ <eq:
     + *end while*
   ]
 ) <alg:dynamics>
+
+= Introductory examples
+
+== Cost function behaviour
+
+- Copy some of your paper drawings
+
+== New optimal costs
+
+- Examples of chains vs star
+
+== Some simulations
+
+
+
 
 = Old stuff from the template
 #figure(
