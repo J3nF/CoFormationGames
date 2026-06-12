@@ -5,7 +5,7 @@ import Printf
 import Random
 
 """
-    run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
+    run_game(G, a, x, r_c, r_g, t_max, ε, α_c)
 
 Run update loop for co-formation games and costs over time.
 
@@ -21,7 +21,7 @@ t_max: Maximum runtime in steps
 ε: Threshold to define convergence
 α_c: Costs per edge
 """
-function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
+function run_game(G, a, x, r_c, r_g, t_max, ε, α_c)
     t = 1
     c = zeros(t_max)
     c[t] = get_total_costs(G, a, x, α_c)
@@ -42,7 +42,7 @@ function run_game!(G, a, x, r_c, r_g, t_max, ε, α_c)
     end
     print(get_game_progress(t, t_max, c[1], c[t]))
     println("\nGame finished after $t steps.")
-    return c
+    return G, a, x, c
 end
 
 
@@ -184,7 +184,7 @@ function get_opinion_costs(node, G, x)
 end
 
 function get_game_progress(t, t_max, c_start, c_t)
-    out_string = Printf.@sprintf "t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start
+    out_string = Printf.@sprintf("t/t_max = %.2f, \t c(t)/c(1) = %.1e", t / t_max, c_t / c_start)
     return out_string
 end
 

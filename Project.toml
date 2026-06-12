@@ -6,9 +6,13 @@ authors = ["J3nF <jensfriedel+git@protonmail.com>"]
 [deps]
 GraphPlot = "a2cc645c-3eea-5389-862e-a155d0052231"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
 GraphPlot = "0.6.2"
 Graphs = "1.14.0"
+Plots = "1.41.6"
+Printf = "1.11.0"
 Random = "1.11.0"
