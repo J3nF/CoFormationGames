@@ -161,7 +161,7 @@ end
 TBW
 """
 function get_costs(node, G, a, x, α_c) # I could make this and the total cost function one thing by using a vector for "node"...
-    c_distances = sum(Graphs.desopo_pape_shortest_paths(G, node))
+    c_distances = sum(Graphs.desopo_pape_shortest_paths(G, node).dists)
     c_edges = α_c * sum(a[node, :])
     c_opinion = get_opinion_costs(node, G, x)
     return c_distances + c_edges + c_opinion
@@ -184,7 +184,7 @@ function get_opinion_costs(node, G, x)
     if length(k) == 0
         c_out = 0
     else
-        c_out = mean(abs.(x[k].-x[node]))
+        c_out = mean(abs.(x[k] .- x[node]))
     end
     return c_out
 end
