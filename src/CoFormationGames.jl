@@ -57,7 +57,7 @@ function get_opinion_update(G, x, ε)
         x_tmp = check_opinion_update(i, G, x, ε)
         if x_tmp != x[i]
             x_out = copy(x)
-            x_out[i] = x_flip
+            x_out[i] = x_tmp
             return x_out
         end
     end
@@ -78,7 +78,7 @@ function check_opinion_update(node, G, x, ε)
     x_tmp[node] = (mean(x[k]) + x[node]) / 2
     c_tmp = get_opinion_costs(node, G, x_tmp)
     # Use update only if cost improvement is above threshold ε
-    if c0 - c_tmp < ε
+    if c_tmp < c0 - ε
         return x_tmp[node]
     end
     return x[node]
@@ -153,7 +153,7 @@ TBW
 """
 function get_costs(node, G, a, x, α_c) # I could make this and the total cost function one thing by using a vector for "node"...
     c_distances = sum(Graphs.desopo_pape_shortest_paths(G, node))
-    c_edges = α_c * sum(a[i, :])
+    c_edges = α_c * sum(a[node, :])
     c_opinion = get_opinion_costs(node, G, x)
     return -(c_distances + c_edges + c_opinion)
 end
