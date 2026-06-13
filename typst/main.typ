@@ -68,7 +68,7 @@ An action profile $a$ --- storing every single agent $i$'s decisions $a_i$ --- c
 
 (Since agents are always treated as part of a graph, the following text uses _agent_, _node_ and _vertex_ interchangibly, unless noted otherwise.) 
 
-The cost funciton $c(a_i)$ which each agent wishes to minimize imposes costs $alpha_c$ on each connection sponsored, but encourages connectedness by punishing a distance measure of $i$ in the graph, $c^d_i (G)$.
+The cost funciton $c(a_i)$ each agent wishes to minimize imposes costs $alpha_a$ on each connection sponsored, but encourages connectedness by punishing a distance measure of $i$ in the graph, $c^d_i (G)$.
 When agent $i$ sponsors an edge to $j$, we set $a_(i j) = 1$, and $a_(i j) = 0$ otherwise, so that
 
 $ c^"NFG"_i (a_i) = c^d_i (G) + alpha_a norm(a_i) $ <eq:c_i>
@@ -87,7 +87,7 @@ They correspond to the concept of local stability, and a big portion NFG-related
 
 Since costs are minimised locally and step-wise, a configuration which minimizes the total cost
 
-$ c(a) = sum_(i=1)^n c_i (a_i) = c_d (G) + alpha_c norm(a) $
+$ c(a) = sum_(i=1)^n c_i (a_i) = c_d (G) + alpha_a norm(a) $
 
 may be unreachable:
 
@@ -135,7 +135,7 @@ $ c^d_i (G) = sum_(j eq.not i) d_(i j) , $ <eq:d_ij>
 with $d_(i j)$ being the shortest pairwise distance.
 Note that unconnected graphs will suffer infinite costs. 
 
-Furthermore, it is worth mentioning that undirected, unilateral NFGs optimal configurations contain only the fully connected and star graphs for positve edge costs $alpha_c eq.not 2$.
+Furthermore, it is worth mentioning that undirected, unilateral NFGs optimal configurations contain only the fully connected and star graphs for positve edge costs $alpha_a eq.not 2$.
 One goal of our model, then, can be to find new optimal networks.
 
 Let us now regard decisions on opinion dynamics, for which simplicity was an important factor, as choosing a well-understood SIM eases the attribution and understanding of results to stem from CFGs' co-evolution dynamic.
@@ -180,7 +180,11 @@ If the majority of other agents disagree, there are few worthwile edges whose cr
 
 With regard to long-term dynamics, consider how @eq:c_x vanishes in the case of total opinion convergence $abs(x_i-x_j)=0 forall i,j $, reducing  @eq:c_cfg to the original NFG cost <eq:cost_i>.
 Given deGroot's opinion averaging and distance costs enforcing connected networks, CFGs have the same set of theoretical long-term Nash equilibria as NFGs.
-That being said, it may be that CFGs can reach NEs inaccessible to classical NFGs.
+
+That being said, we still expect interesting dynamics to occur.
+On the one hand, CFGs could reach equilibria inaccessible to classical NFGs, due to the opinion temr enabling the system to escape local minima.
+On the other hand, the co-evolution of opinions and networks may lead to interesting transient dynamics, such as cycles or long convergence times.
+Lastly, as we shall see, the optimal states of CFGs can differ from those of NFGs, which implies a dynamic path to optimality and non-trivial Price of Anarchy.
 
 #figure(
   table(
@@ -203,13 +207,13 @@ That being said, it may be that CFGs can reach NEs inaccessible to classical NFG
     [Distance costs], [$c^d$], [ $ZZ^-$ ],
     [Pairwise distance], [$d_(i j)$], [$NN$],
     [Sponsorship costs], [$c^a$],  [ $]-infinity,0[$ ],
-    [Costs per edge], [$alpha_c$], [ $]0,infinity[$ ],
+    [Costs per edge], [$alpha_a$], [ $]0,infinity[$ ],
     [Opinion costs], [$c^x$], [ $]-infinity,0[$ ],
     [Opinion range], [$alpha_x$], [$RR^+$],
     [Set of $i$'s neighbours], [$K_i$], [$NN$],
     [Communication rate], [$r_c$], [ $[0, infinity[$ ],
     [Action rate], [$r_a$], [${0,1}$],
-    [Convergence threshold], [$epsilon$], [ $]0,alpha_c]$ ],
+    [Convergence threshold], [$epsilon$], [ $]0,alpha_a]$ ],
   ),
   caption: [List of variables used in Co-Formation Games],
   placement: auto,
@@ -254,11 +258,50 @@ This way, CFGs include both NFGs and SIMs as the special cases of $r_x=0$ and $r
   placement: auto,
 ) <alg:dynamics>
 
-= 
+= Basic Co-Formation Game insights
 
-== Cost function behaviour
+In order to gain some intuition about the behaviour of CFGs, we start by looking at small, simple systems and their cost compositon.
+Comparisons to star graphs are of special interests, as they are the only optimal configuration for NFGs for edge costs $alpha_a > 2$.
 
-- Copy some of your paper drawings
+== Opinion costs in simple graphs
+
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    gutter: 3pt,
+    grid.cell(
+      image("fig/0_outchain.png", width: 100%),
+    ),
+    grid.cell(
+      rowspan: 2,
+      inset: (y: 40pt),
+      image("fig/0_triangle.png", width: 100%)
+    ),
+    grid.cell(
+      image("fig/0_inchain.png", width: 100%)
+    ),
+    grid.cell(
+      colspan: 2,
+        table(
+          columns: (7em, 4em, 4em, 4em),
+          inset: (x: 8pt, y: 4pt),
+          stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
+          //fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0  { rgb("#efefef") },
+          //fill: (x, y) => if y > 0 and calc.rem(y, 4) in (1,2)  { rgb("#efefef") },
+          
+          table.header[*$G$*][*$c^d$*][*$c^a slash alpha_a$*][*$c^x slash alpha_x$*],
+          [top chain],[$8$],[$2$],[$1.5$],
+          [bottom chain],[$8$],[$2$],[$3$],
+          [triangle],[$6$],[$3$],[$2$],
+        )
+    )
+  ), 
+  caption: [
+    Depending on opinion placement, edge costs, and opinion range, costs motivate nodes to drop or add new edges. 
+  ],
+  placement: auto,
+)
+
 
 == New optimal costs
 
