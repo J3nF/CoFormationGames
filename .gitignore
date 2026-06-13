@@ -57,6 +57,7 @@ result-*
 # *.ps
 # *.eps
 *.pdf
+*.png
 
 ## Generated if empty string is given at "Please type another file name for output:"
 .pdf
@@ -428,4 +429,4 @@ ipython_config.py
 .virtual_documents/
 
 # Remove previous ipynb_checkpoints
-#   git rm -r .ipynb_checkpoints/
+git rm -r .ipynb_checkpoints/
