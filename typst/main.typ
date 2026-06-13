@@ -231,7 +231,7 @@ If there is no such action step, the game probes other nodes until it finds one 
 While, theoretically, the game runs indefinitely, we can expect costs to converge after some time.
 In pracice, simulations end after surpassing the allocated runtime or total costs $c^"CFG"$ changing less than a threshold $epsilon$.
 
-This way, CFGs include both NFGs and SIMs as the special cases of $r_x=0$ and $r_a=0$, respectively, while allowing for a co-evolution of opinions and networks in the general case.
+All in all, CFGs include both NFGs and SIMs as special cases ($r_a=0$ and $r_x=0$, respectively), while random updates allow for a co-evolution of opinions and networks in the general case.
 
 #figure(
   kind: "algorithm",
@@ -286,8 +286,6 @@ Comparisons to star graphs are of special interests, as they are the only optima
           columns: (7em, 4em, 4em, 4em),
           inset: (x: 8pt, y: 4pt),
           stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
-          //fill: (x, y) => if y > 0 and calc.rem(y, 2) == 0  { rgb("#efefef") },
-          //fill: (x, y) => if y > 0 and calc.rem(y, 4) in (1,2)  { rgb("#efefef") },
           
           table.header[*$G$*][*$c^d$*][*$c^a slash alpha_a$*][*$c^x slash alpha_x$*],
           [top chain],[$8$],[$2$],[$1.5$],
@@ -300,8 +298,45 @@ Comparisons to star graphs are of special interests, as they are the only optima
     Depending on opinion placement, edge costs, and opinion range, costs motivate nodes to drop or add new edges. 
   ],
   placement: auto,
-)
+) <fig:n3>
 
+
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    gutter: 3pt,
+    grid.cell(
+      image("fig/1_outchain.png", width: 108%),
+    ),
+    grid.cell(
+      image("fig/1_1star.png", width: 120%)
+    ),
+    grid.cell(
+      image("fig/1_inchain.png", width: 108%)
+    ),
+    grid.cell(
+        image("fig/1_2star.png", width: 120%)
+    ),
+    grid.cell(
+      colspan: 2,
+        table(
+          columns: (7em, 4em, 4em, 4em),
+          inset: (x: 8pt, y: 4pt),
+          stroke: (x, y) => if y <= 1 { (top: 0.5pt) },
+
+          table.header[*$G$*][*$c^d$*][*$c^a slash alpha_a$*][*$c^x slash alpha_x$*],
+          [top star],[$18$],[$3$],[$1.33$],
+          [top chain],[$20$],[$3$],[$1.5$],
+          [bottom chain],[$20$],[$2$],[$1$],
+          [bottom star],[$18$],[$3$],[$2.66$],
+        )
+    )
+  ), 
+  caption: [
+    Chains can offer optimal costs, outdoing star graphs for certain opinion profiles and parameter choices by profiting from shrinking opinion costs when disagreement happens inside the chain.
+  ],
+  placement: auto,
+)
 
 == New optimal costs
 
